@@ -189,6 +189,7 @@ public:
 public:
   g2o::RobustKernelFactory* robust_kernel_factory;
   std::unique_ptr<g2o::SparseOptimizer> graph;  // g2o graph
+  std::ofstream compute_time_writer;
 };
 
 }  // namespace hdl_graph_slam

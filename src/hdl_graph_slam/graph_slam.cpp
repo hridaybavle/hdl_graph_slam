@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BSD-2-Clause
 
 #include <hdl_graph_slam/graph_slam.hpp>
-
+#include <iostream>
+#include <fstream>
 #include <boost/format.hpp>
 #include <g2o/stuff/macros.h>
 #include <g2o/core/factory.h>
@@ -83,6 +84,10 @@ GraphSLAM::GraphSLAM(const std::string& solver_type) {
   std::cout << "done" << std::endl;
 
   robust_kernel_factory = g2o::RobustKernelFactory::instance();
+
+  compute_time_writer.open("/home/hriday/compute_time.csv");
+  compute_time_writer << "time,compute_time \n";
+  compute_time_writer.close();
 }
 
 /**
@@ -426,6 +431,9 @@ int GraphSLAM::optimize(int num_iterations) {
   std::cout << "iterations: " << iterations << " / " << num_iterations << std::endl;
   std::cout << "chi2: (before)" << chi2 << " -> (after)" << graph->chi2() << std::endl;
   std::cout << "time: " << boost::format("%.3f") % (t2 - t1).toSec() << "[sec]" << std::endl;
+  compute_time_writer.open("/home/hriday/compute_time.csv", std::ofstream::out | std::ofstream::app);
+  compute_time_writer << std::to_string(ros::Time::now().toSec()) + "," + std::to_string((t2 - t1).toSec()) +  "\n";
+  compute_time_writer.close();
 
   return iterations;
 }
